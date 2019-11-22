@@ -1,13 +1,20 @@
 from flask import Flask
 
+from .database.database import db
 from .views import home
+from .views.shopee import shopee_crawler
+
 # Init this app
 app = Flask(__name__)
 app.config.from_pyfile('../config.py', silent=True)
 
+def init_db():
+    db.init_app(app)
+
 # Register blueprints
 _target_modules_list = [
-	home.home
+	home.home,
+	shopee_crawler.shopee_crawler
 ]
 for _m in _target_modules_list:
     app.register_blueprint(_m)
