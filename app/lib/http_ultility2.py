@@ -20,37 +20,26 @@ user_agents = [
 accept_languages = ['en-US,en;q=0.9', 'de;q=0.8', 'fr',
                     'it;q=0.6,vi-VN;q=0.5', 'fr-FR;q=0.3,pt;q=0.2']
 
-def prepare_headers():
+def prepare_headers(refer, ck):
     headers = {
         'User-Agent': user_agents[random.randint(0, len(user_agents) - 1)],
         'Accept-Language': accept_languages[random.randint(0, len(accept_languages) - 1)],
         'accept-encoding': 'gzip, deflate, br',
         'Accepts': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
+        'cookie': ck,
         'x-requested-with': 'XMLHttpRequest',
-        'x-api-source':'pc'
+        'x-api-source':'pc',
+        'referer':'https://shopee.tw/search/?keyword=%E4%BA%8C%E6%89%8B%E9%9B%BB%E8%85%A6&subcategory'
     }
     return headers
 
-def send_request(request_url, params = {}, proxies = None):
-    hdrs = prepare_headers()
-    # proxies = ['43.247.132.52:3129', '88.118.134.214:38662',"212.56.218.90:48047","59.126.108.147:49480"]
-    if proxies != None:
-        result = requests.get(
-            request_url, 
-            headers=hdrs, 
-            params=params,
-            timeout=3,
-            verify = False
-        )
-    else:
-        result = requests.get(
-            request_url, 
-            headers=hdrs, 
-            params=params,
-            proxies={'http': 'http://' + random.choice(proxies)},
-            timeout=3,
-            verify = False
-        )
+def send_request(request_url, params = {}, refer = None, ck = None):
+    hdrs = prepare_headers(refer, ck)
+    result = requests.get(
+        request_url, 
+        headers=hdrs, 
+        params=params
+    )
     if (result.status_code == 200):
         return result
     if (result.status_code == 403):
