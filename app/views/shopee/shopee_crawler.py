@@ -1,4 +1,5 @@
 import time
+import json
 from flask import Blueprint, current_app, jsonify
 from sqlalchemy.sql import text
 from ...database.database import db
@@ -7,7 +8,7 @@ from ...lib.http_ultility2 import send_request
 
 shopee_crawler = Blueprint('shopee_crawler', __name__)
 shopeeApiUrl = "https://shopee.vn/api/v2/search_items/"
-shopeeMaxPage = 2000
+shopeeMaxPage = 2
 shopeeLimit = 100
 shopeeImageUrl = "https://cf.shopee.vn/file/"
 sourceTypeCode = 'shopee'
@@ -32,7 +33,8 @@ def shopee_crawler_func():
 							'name_search': p['name'],
 							'price': format_price(p['price_before_discount']),
 							'sale_price': format_price(p['price']),
-							'image': shopeeImageUrl + p['image'],
+							'image': p['image'] if 'image' in p else None,
+							'thumb_images': json.dumps(p['images']) if 'images' in p else None,
 							'shop_id': p['shopid'],
 							'source_id': p['itemid'],
 							'source_type_code': sourceTypeCode,
@@ -51,16 +53,17 @@ def shopee_crawler_func():
 			# time.sleep(3)
 		sql = """
 			INSERT INTO 
-				products(name, name_search, price, sale_price, image, shop_id, source_id, source_type_code, source_url) 
+				products(name, name_search, price, sale_price, image, thumb_images, shop_id, source_id, source_type_code, source_url) 
 			VALUES
-				(:name, :name_search, :price, :sale_price, :image, :shop_id, :source_id, :source_type_code, :source_url)
+				(:name, :name_search, :price, :sale_price, :image, :thumb_images, :shop_id, :source_id, :source_type_code, :source_url)
 			ON 
 				DUPLICATE KEY 
 			UPDATE
 				name=VALUES(name),
 				name_search=VALUES(name_search),
 				source_url=VALUES(source_url),
-				image=VALUES(image)
+				image=VALUES(image),
+				thumb_images=VALUES(thumb_images)
 		"""
 		statement = text(sql)
 		try:
@@ -101,7 +104,7 @@ def format_price(price):
 	return int(price)/10000 if price > 0 else price
 
 def convert_url(name, productId, shopId):
-	baseUrl = "https://shopee.vn/"
+	baseUrl = ""#"https://shopee.vn/"
 	name = name.replace(" ", "-")
 	name = name.replace("[","-")
 	name = name.replace("]", "-")

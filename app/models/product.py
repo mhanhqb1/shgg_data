@@ -16,15 +16,17 @@ class Product(db.Model):
     # created = db.Column('created', db.Integer)
     # updated = db.Column('updated', db.Integer)
     image = db.Column('image', db.String(255))
+    thumb_images = db.Column('thumb_images', db.Text)
     shop_id = db.Column('shop_id', db.String(255))
 
-    def __init__(self, name, name_search, price, sale_price, history_price, image, shop_id, source_id, source_type_code, source_url=None):
+    def __init__(self, name, name_search, price, sale_price, history_price, image, thumb_images, shop_id, source_id, source_type_code, source_url=None):
         self.name = name
         self.name_search = name_search
         self.price = price
         self.sale_price = sale_price
         self.history_price = history_price
         self.image = image
+        self.thumb_images = thumb_images
         self.shop_id = shop_id
         self.source_id = source_id
         self.source_type_code = source_type_code
