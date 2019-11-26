@@ -1,29 +1,26 @@
+import time
 from flask import Blueprint, current_app, jsonify
 from sqlalchemy.sql import text
 from ...database.database import db
 from ...models.product import Product
 from ...lib.http_ultility2 import send_request
 
-from selenium import webdriver
-from webdriver_manager.chrome import ChromeDriverManager
-
 shopee_crawler = Blueprint('shopee_crawler', __name__)
 shopeeApiUrl = "https://shopee.vn/api/v2/search_items/"
-shopeeMaxPage = 2
-shopeeLimit = 50
+shopeeMaxPage = 2000
+shopeeLimit = 100
 shopeeImageUrl = "https://cf.shopee.vn/file/"
 sourceTypeCode = 'shopee'
 
 @shopee_crawler.route('/shopee/crawler', methods = ['GET'])
 def shopee_crawler_func():
 	cates = get_categories()
-	driver = webdriver.Chrome(ChromeDriverManager().install())
-	# driver = webdriver.Chrome()
-	driver.get('https://shopee.vn/')
-	ck = ';'.join(['{}={}'.format(item.get('name'), item.get('value')) for item in driver.get_cookies()]) 
+	ck = None
+	count = 0
 	for cate in cates:
 		page = 0
 		refer = 'https://shopee.vn/%C3%81o-thun-cat.78.2827'
+		products = []
 		while page <= shopeeMaxPage:
 			try:
 				result = crawler(cate, page*shopeeLimit, refer, ck)
@@ -41,28 +38,36 @@ def shopee_crawler_func():
 							'source_type_code': sourceTypeCode,
 							'source_url': convert_url(p['name'], p['itemid'], p['shopid'])
 						}
-						statement = text("""
-							INSERT INTO 
-								products(name, name_search, price, sale_price, image, shop_id, source_id, source_type_code, source_url) 
-							VALUES
-								(:name, :name_search, :price, :sale_price, :image, :shop_id, :source_id, :source_type_code, :source_url)
-							ON 
-								DUPLICATE KEY 
-							UPDATE
-								name=VALUES(name),
-								name_search=VALUES(name_search),
-								source_url=VALUES(source_url),
-								price=VALUES(price),
-								sale_price=VALUES(sale_price)
-						""")
-						try:
-							db.engine.execute(statement, **product)
-						except Exception as e:
-							return jsonify(e)
+						count += 1
+						print(str(count) + '. ' + product['name'])
+						products.append(product)
+				else:
+					print('None')
+					break
+				print('-------------Crawl page ' + str(page))
 			except Exception as e:
 				print(e)
 				return jsonify('Error')
-					
+			# time.sleep(3)
+		sql = """
+			INSERT INTO 
+				products(name, name_search, price, sale_price, image, shop_id, source_id, source_type_code, source_url) 
+			VALUES
+				(:name, :name_search, :price, :sale_price, :image, :shop_id, :source_id, :source_type_code, :source_url)
+			ON 
+				DUPLICATE KEY 
+			UPDATE
+				name=VALUES(name),
+				name_search=VALUES(name_search),
+				source_url=VALUES(source_url),
+				image=VALUES(image)
+		"""
+		statement = text(sql)
+		try:
+			db.engine.execute(statement, products)
+		except Exception as e:
+			print(e)
+			return e			
 
 	return jsonify(result)
 

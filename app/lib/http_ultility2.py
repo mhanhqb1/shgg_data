@@ -26,7 +26,7 @@ def prepare_headers(refer, ck):
         'Accept-Language': accept_languages[random.randint(0, len(accept_languages) - 1)],
         'accept-encoding': 'gzip, deflate, br',
         'Accepts': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
-        'cookie': ck,
+        # 'cookie': ck,
         'x-requested-with': 'XMLHttpRequest',
         'x-api-source':'pc',
         'referer':'https://shopee.tw/search/?keyword=%E4%BA%8C%E6%89%8B%E9%9B%BB%E8%85%A6&subcategory'
