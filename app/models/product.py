@@ -13,6 +13,8 @@ class Product(db.Model):
     source_id = db.Column('source_id', db.String(45))
     source_url = db.Column('source_url', db.String(255))
     source_type_code = db.Column('source_type_code', db.String(45))
+    source_cate_id = db.Column('source_cate_id', db.Integer)
+    source_cate_name = db.Column('source_cate_name', db.String(255))
     # created = db.Column('created', db.Integer)
     # updated = db.Column('updated', db.Integer)
     image = db.Column('image', db.String(255))

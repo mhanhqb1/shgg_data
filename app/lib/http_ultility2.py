@@ -29,7 +29,7 @@ def prepare_headers(refer, ck):
         # 'cookie': ck,
         'x-requested-with': 'XMLHttpRequest',
         'x-api-source':'pc',
-        'referer':'https://shopee.tw/search/?keyword=%E4%BA%8C%E6%89%8B%E9%9B%BB%E8%85%A6&subcategory'
+        'referer': refer
     }
     return headers
 
