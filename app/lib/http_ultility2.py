@@ -47,3 +47,15 @@ def send_request(request_url, params = {}, refer = None, ck = None):
     elif (result.status_code == 404):
         raise PageNotFoundError()
     raise Exception("Error while fetching data" + str(result.status_code))
+
+def send_request_beecost(request_url):
+    result = requests.get(
+        request_url
+    )
+    if (result.status_code == 200):
+        return result
+    if (result.status_code == 403):
+        raise BotBlockError()
+    elif (result.status_code == 404):
+        raise PageNotFoundError()
+    raise Exception("Error while fetching data" + str(result.status_code))

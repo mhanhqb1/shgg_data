@@ -10,6 +10,7 @@ class Product(db.Model):
     price = db.Column('price', db.Integer)
     sale_price = db.Column('sale_price', db.Integer)
     history_price = db.Column('history_price', db.Text)
+    history_price_ts = db.Column('history_price_ts', db.Text)
     source_id = db.Column('source_id', db.String(45))
     source_url = db.Column('source_url', db.String(255))
     source_type_code = db.Column('source_type_code', db.String(45))
