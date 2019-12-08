@@ -61,7 +61,6 @@ def get_categories():
 
 def init_driver(url):
 	options = webdriver.ChromeOptions()
-	options.binary_location = '/usr/bin/google-chrome-unstable'
 	options.add_argument('headless')
 	options.add_argument('window-size=1200x600')
 	driver = webdriver.Chrome(chrome_options=options)
