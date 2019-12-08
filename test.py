@@ -5,21 +5,20 @@ from urllib.parse import unquote
 import time
 import re
 
-def init_driver():
+def init_driver(url):
 	driver = webdriver.Chrome(ChromeDriverManager().install())
 	# driver = webdriver.Chrome()
-	driver.get('https://shopee.vn/%C3%81o-thun-cat.78.2827')
-	driver.set_page_load_timeout(45)
-	driver.implicitly_wait(2)
+	driver.get(url)
+	time.sleep(3)
 	print ("Executed Succesfull")
 	return driver
 
 def scroll_page(driver):
-	SCROLL_PAUSE_TIME = 1
+	SCROLL_PAUSE_TIME = 2
 
 	# Get scroll height
-	last_height = 5000
-	new_height = 300
+	last_height = 4000
+	new_height = 20
 
 	while True:
 	    # Scroll down to bottom
@@ -44,7 +43,7 @@ def get_data(driver):
 	itemsSelector = 'div.shopee-search-item-result div.shopee-search-item-result__item > div > a'
 	items = driver.find_elements_by_css_selector(itemsSelector)
 	for item in items:
-		print(i)
+		# print(i)
 		i = i + 1
 		# Get url
 		url = unquote(item.get_attribute('href'))
@@ -82,14 +81,24 @@ def get_data(driver):
 		})
 	return result
 
-def main():
-	driver = init_driver()
-	scroll_page(driver)
-	result = get_data(driver)
-	for e in result:
-		print(e['id'], e['shop_id'])
+def crawler(url):
+	count = 0
+	i = 0
+	while i <= 100:
+		param = '?page=' + str(i) + '&newest=50&sortBy=pop'
+		driver = init_driver(url + param)
+		i = i + 1
+		scroll_page(driver)
+		result = get_data(driver)
+		for e in result:
+			count = count + 1
+			print(count)
+		driver.close()
+	print(count)
 
-	driver.close()
+def main():
+	url = 'https://shopee.vn/%C3%81o-thun-cat.78.2827'
+	crawler(url)
 
 main()
 

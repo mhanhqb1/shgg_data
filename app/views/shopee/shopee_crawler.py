@@ -27,7 +27,6 @@ def shopee_crawler_func():
 	cates = get_categories()
 	if (len(cates) == 0):
 		return jsonify('Done')
-	ck = None
 	count = 0
 	for cate in cates:
 		page = 0
