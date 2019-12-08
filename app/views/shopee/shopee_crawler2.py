@@ -28,19 +28,27 @@ def shopee_crawler2_func():
 	ck = None
 	count = 0
 	for cate in cates:
-		page = 0
+		error = False
+		page = cate.page
 		cateUrl = cate.cate_url
 		cateId = cate.cate_id
 		cateName = cate.cate_name
 		products = []
 		while page <= shopeeMaxPage:
 			try:
+				print('---- Crawler Page ' + str(page) + ' ----')
 				result = crawler(cateUrl, page)
-				page = page + 1
 				save_data(result, cateId, cateName)
+				page = page + 1
+				cate.page = page
+				db.session.commit()
 			except Exception as e:
 				print(e)
+				error = True
 				return jsonify('Error 1')
+		cate.updated = todayTime
+		cate.page = 0
+		db.session.commit()
 
 	return jsonify(result)
 
@@ -118,7 +126,8 @@ def get_data(driver):
 		if (parseImage != []):
 			image = parseImage[0].get_attribute('style')
 			image = re.findall(r'background-image: url\("https://cf.shopee.vn/file/(.*?)"\)', image)
-			image = image[0]
+			if (image != [] and image != None):
+				image = image[0]
 
 		result.append({
 			'id': productId,

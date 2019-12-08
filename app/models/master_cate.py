@@ -10,10 +10,12 @@ class MasterCate(db.Model):
     cate_name = db.Column('cate_name', db.String(255))
     source_type_code = db.Column('source_type_code', db.String(45))
     updated = db.Column('updated', db.Integer)
+    page = db.Column('page', db.Integer)
 
-    def __init__(self, cate_id, cate_url, cate_name, source_type_code, updated):
+    def __init__(self, cate_id, cate_url, cate_name, source_type_code, updated, page = 0):
         self.cate_id = cate_id
         self.cate_url = cate_url
         self.cate_name = cate_name
         self.source_type_code = source_type_code
         self.updated = updated
+        self.page = page
