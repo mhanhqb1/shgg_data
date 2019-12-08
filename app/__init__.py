@@ -1,7 +1,7 @@
 from flask import Flask
 
 from .database.database import db
-from .views import home
+# from .views import home
 from .views.shopee import shopee_crawler2
 
 # Init this app
@@ -13,7 +13,7 @@ def init_db():
 
 # Register blueprints
 _target_modules_list = [
-	home.home,
+	# home.home,
 	# shopee_crawler.shopee_crawler,
 	shopee_crawler2.shopee_crawler2
 ]
