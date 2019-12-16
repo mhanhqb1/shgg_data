@@ -60,11 +60,11 @@ def get_categories():
 	return cates
 
 def init_driver(url):
-	# options = webdriver.ChromeOptions()
-	# options.add_argument('headless')
-	# options.add_argument('window-size=1200x600')
+	options = webdriver.ChromeOptions()
+	options.add_argument('headless')
+	options.add_argument('window-size=1200x600')
 	# driver = webdriver.Chrome(chrome_options=options)
-	driver = webdriver.Chrome(ChromeDriverManager().install())
+	driver = webdriver.Chrome(ChromeDriverManager().install(), chrome_options=options)
 	# driver = webdriver.Chrome('/usr/local/bin/chromedriver')
 	driver.get(url)
 	time.sleep(3)
@@ -156,6 +156,7 @@ def save_data(result, cateId, cateName, cate):
 	products = []
 	if (result != None):
 		for p in result:
+			print(p['name'], p['price'])
 			product = {
 				"name": p['name'],
 				'name_search': p['name'],
@@ -194,8 +195,6 @@ def save_data(result, cateId, cateName, cate):
 			statement = text(sql)
 			try:
 				db.engine.execute(statement, products)
-				cate.updated = todayTime
-				db.session.commit()
 			except Exception as e:
 				print(e)
 				return 'Error'
