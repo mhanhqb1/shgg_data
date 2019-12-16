@@ -2,6 +2,7 @@ import random
 import requests
 import time
 from exception import *
+from lxml.html import fromstring
 
 user_agents = [
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36',
@@ -35,10 +36,17 @@ def prepare_headers(refer, ck):
 
 def send_request(request_url, params = {}, refer = None, ck = None):
     hdrs = prepare_headers(refer, ck)
+    proxies = get_proxies()
+    # proxies = [
+    #     '94.66.183.245:8080',
+    #     '113.53.122.47:8080'
+    # ]
+    proxy = proxies[random.randint(0, len(proxies) - 1)]
     result = requests.get(
         request_url, 
         headers=hdrs, 
-        params=params
+        params=params,
+        proxies={"http": proxy, "http": proxy}
     )
     if (result.status_code == 200):
         return result
@@ -59,3 +67,14 @@ def send_request_beecost(request_url):
     elif (result.status_code == 404):
         raise PageNotFoundError()
     raise Exception("Error while fetching data" + str(result.status_code))
+
+def get_proxies():
+    url = 'https://free-proxy-list.net/'
+    response = requests.get(url)
+    parser = fromstring(response.text)
+    proxies = []
+    for i in parser.xpath('//tbody/tr')[:10]:
+        if i.xpath('.//td[7][contains(text(),"yes")]'):
+            proxy = ":".join([i.xpath('.//td[1]/text()')[0], i.xpath('.//td[2]/text()')[0]])
+            proxies.append(proxy)
+    return proxies

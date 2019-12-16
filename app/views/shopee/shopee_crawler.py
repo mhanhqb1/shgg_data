@@ -9,6 +9,7 @@ from ...database.database import db
 from ...models.product import Product
 from ...models.master_cate import MasterCate
 from ...lib.http_ultility2 import send_request, send_request_beecost
+from lxml.html import fromstring
 
 shopee_crawler = Blueprint('shopee_crawler', __name__)
 shopeeApiUrl = "https://shopee.vn/api/v2/search_items/"
@@ -28,6 +29,7 @@ def shopee_crawler_func():
 	if (len(cates) == 0):
 		return jsonify('Done')
 	count = 0
+	ck = None
 	for cate in cates:
 		page = 0
 		refer = cate.cate_url
@@ -40,17 +42,18 @@ def shopee_crawler_func():
 				page = page + 1
 				if (result != None):
 					for p in result:
-						price = 0
+						price = format_price(p['price'])
+						print(price)
 						priceHistory = None
 						priceHistoryTs = None
-						beecost = get_price_from_beecost(p['itemid'], p['shopid'])
-						if (beecost != None):
-							itemHistory = beecost['item_history'] if 'item_history' in beecost else None
-							if itemHistory != None:
-								price = itemHistory['price'][-1]
-								priceHistory = json.dumps(itemHistory['price'])
-								priceHistoryTs = json.dumps(itemHistory['price_ts'])
-								print(price)
+						# beecost = get_price_from_beecost(p['itemid'], p['shopid'])
+						# if (beecost != None):
+						# 	itemHistory = beecost['item_history'] if 'item_history' in beecost else None
+						# 	if itemHistory != None:
+						# 		price = itemHistory['price'][-1]
+						# 		priceHistory = json.dumps(itemHistory['price'])
+						# 		priceHistoryTs = json.dumps(itemHistory['price_ts'])
+						# 		print(price)
 						product = {
 							"name": p['name'],
 							'name_search': p['name'],
@@ -156,5 +159,16 @@ def get_price_from_beecost(productId, shopId):
 				print(e)
 	except Exception as e:
 		print(e)
+
+def get_proxies():
+	url = 'https://free-proxy-list.net/'
+	response = requests.get(url)
+	parser = fromstring(response.text)
+	proxies = []
+	for i in parser.xpath('//tbody/tr')[:10]:
+		if i.xpath('.//td[7][contains(text(),"yes")]'):
+			proxy = ":".join([i.xpath('.//td[1]/text()')[0], i.xpath('.//td[2]/text()')[0]])
+			proxies.append(proxy)
+	return proxies
 
 

@@ -38,7 +38,7 @@ def shopee_crawler2_func():
 			try:
 				print('---- Crawler Page ' + str(page) + ' ----')
 				result = crawler(cateUrl, page)
-				save_data(result, cateId, cateName)
+				save_data(result, cateId, cateName, cate)
 				page = page + 1
 				cate.page = page
 				db.session.commit()
@@ -64,8 +64,8 @@ def init_driver(url):
 	# options.add_argument('headless')
 	# options.add_argument('window-size=1200x600')
 	# driver = webdriver.Chrome(chrome_options=options)
-	# driver = webdriver.Chrome(ChromeDriverManager().install())
-	driver = webdriver.Chrome('/usr/local/bin/chromedriver')
+	driver = webdriver.Chrome(ChromeDriverManager().install())
+	# driver = webdriver.Chrome('/usr/local/bin/chromedriver')
 	driver.get(url)
 	time.sleep(3)
 	print ("Executed Succesfull")
@@ -152,7 +152,7 @@ def crawler(url, page):
 	driver.close()
 	return result
 
-def save_data(result, cateId, cateName):
+def save_data(result, cateId, cateName, cate):
 	products = []
 	if (result != None):
 		for p in result:
