@@ -38,7 +38,7 @@ def shopee_crawler2_func():
 			try:
 				print('---- Crawler Page ' + str(page) + ' ----')
 				result = crawler(cateUrl, page)
-				save_data(result, cateId, cateName, cate)
+				save_data(result, cate)
 				page = page + 1
 				cate.page = page
 				db.session.commit()
@@ -152,7 +152,7 @@ def crawler(url, page):
 	driver.close()
 	return result
 
-def save_data(result, cateId, cateName, cate):
+def save_data(result, cate):
 	products = []
 	if (result != None):
 		for p in result:
@@ -164,12 +164,13 @@ def save_data(result, cateId, cateName, cate):
 				'sale_price': p['price'],
 				'image': p['image'] if 'image' in p else None,
 				'thumb_images': json.dumps(p['images']) if 'images' in p else None,
+				'cate_id': cate.product_cate_id,
 				'shop_id': p['shop_id'],
 				'source_id': p['id'],
 				'source_type_code': sourceTypeCode,
 				'source_url': p['url'],
-				'source_cate_id': cateId,
-				'source_cate_name': cateName,
+				'source_cate_id': cate.cate_id,
+				'source_cate_name': cate.cate_name,
 				'history_price': None,
 				'history_price_ts': None
 			}

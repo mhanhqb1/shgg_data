@@ -11,6 +11,7 @@ class MasterCate(db.Model):
     source_type_code = db.Column('source_type_code', db.String(45))
     updated = db.Column('updated', db.Integer)
     page = db.Column('page', db.Integer)
+    product_cate_id = db.Column('product_cate_id', db.Integer)
 
     def __init__(self, cate_id, cate_url, cate_name, source_type_code, updated, page = 0):
         self.cate_id = cate_id
