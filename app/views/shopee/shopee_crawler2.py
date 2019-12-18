@@ -14,7 +14,7 @@ import time
 import re
 
 shopee_crawler2 = Blueprint('shopee_crawler2', __name__)
-shopeeMaxPage = 100
+shopeeMaxPage = 2
 shopeeImageUrl = "https://cf.shopee.vn/file/"
 sourceTypeCode = 'shopee'
 todayTime = int(time.mktime(time.strptime(datetime.today().strftime('%Y-%m-%d'), "%Y-%m-%d")))
@@ -34,6 +34,7 @@ def shopee_crawler2_func():
 		cateId = cate.cate_id
 		cateName = cate.cate_name
 		products = []
+		print('--------------- Crawler Cate: ' + str(cateName) + ' ---------------')
 		while page <= shopeeMaxPage:
 			try:
 				print('---- Crawler Page ' + str(page) + ' ----')
@@ -178,9 +179,9 @@ def save_data(result, cate):
 		if (products != []):
 			sql = """
 				INSERT INTO 
-					products(name, name_search, price, sale_price, image, thumb_images, shop_id, source_id, source_type_code, source_url, source_cate_id, source_cate_name, history_price, history_price_ts) 
+					products(name, name_search, price, sale_price, image, thumb_images, shop_id, source_id, source_type_code, source_url, source_cate_id, source_cate_name, history_price, history_price_ts, cate_id) 
 				VALUES
-					(:name, :name_search, :price, :sale_price, :image, :thumb_images, :shop_id, :source_id, :source_type_code, :source_url, :source_cate_id, :source_cate_name, :history_price, :history_price_ts)
+					(:name, :name_search, :price, :sale_price, :image, :thumb_images, :shop_id, :source_id, :source_type_code, :source_url, :source_cate_id, :source_cate_name, :history_price, :history_price_ts, :cate_id)
 				ON 
 					DUPLICATE KEY 
 				UPDATE
@@ -189,6 +190,7 @@ def save_data(result, cate):
 					source_url=VALUES(source_url),
 					image=VALUES(image),
 					price=VALUES(price),
+					cate_id=VALUES(cate_id),
 					sale_price=VALUES(sale_price),
 					source_cate_id=VALUES(source_cate_id),
 					source_cate_name=VALUES(source_cate_name)

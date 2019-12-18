@@ -1,7 +1,7 @@
 import os
 
 # Debug mode
-DEBUG = True
+DEBUG = False
 
 SQLALCHEMY_ECHO = False
 SQLALCHEMY_TRACK_MODIFICATIONS = False
