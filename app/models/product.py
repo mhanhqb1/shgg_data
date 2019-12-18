@@ -1,4 +1,5 @@
 from ..database.database import db
+from .cate import Cate
 
 class Product(db.Model):
     __tablename__ = "products"
@@ -35,3 +36,37 @@ class Product(db.Model):
         self.source_id = source_id
         self.source_type_code = source_type_code
         self.source_url = source_url
+
+    def get_all(param = {}):
+        # Init
+        shopeeImageUrl = "https://cf.shopee.vn/file/"
+        result = []
+        productCates = {}
+        limit = param['limit'] if 'limit' in param else 20
+
+        # Get list cate
+        cates = db.session.query(Cate).all()
+        for c in cates:
+            productCates[c.id] = {
+                'id': c.id,
+                'name': c.name,
+                'slug': c.slug,
+                'image': c.image,
+                'icon': c.icon
+            }
+
+        # Get list products
+        products = db.session.query(Product).filter(Product.cate_id.isnot(None)).limit(limit).all()
+        for p in products:
+            result.append({
+                'id': p.id,
+                'name': p.name,
+                'price': p.price,
+                'source_url': p.source_url,
+                'image': shopeeImageUrl + p.image,
+                'shop_id': p.shop_id,
+                'source_type_code': p.source_type_code,
+                'cate': productCates[p.cate_id] if p.cate_id in productCates else None
+            })
+
+        return result
