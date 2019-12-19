@@ -1,5 +1,6 @@
 from ..database.database import db
 from .cate import Cate
+from .master_source_type import MasterSourceType
 
 class Product(db.Model):
     __tablename__ = "products"
@@ -19,7 +20,7 @@ class Product(db.Model):
     source_cate_id = db.Column('source_cate_id', db.Integer)
     source_cate_name = db.Column('source_cate_name', db.String(255))
     # created = db.Column('created', db.Integer)
-    # updated = db.Column('updated', db.Integer)
+    updated = db.Column('updated', db.Integer)
     image = db.Column('image', db.String(255))
     thumb_images = db.Column('thumb_images', db.Text)
     shop_id = db.Column('shop_id', db.String(255))
@@ -42,7 +43,20 @@ class Product(db.Model):
         shopeeImageUrl = "https://cf.shopee.vn/file/"
         result = []
         productCates = {}
+        productSourceTypes = {}
         limit = param['limit'] if 'limit' in param else 20
+
+        # Get list source types
+        sourceTypes = db.session.query(MasterSourceType).all()
+        for s in sourceTypes:
+            productSourceTypes[s.code] = {
+                'id': s.id,
+                'code': s.code,
+                'name': s.name,
+                'logo': s.logo,
+                'url': s.url,
+                'description': s.description
+            }
 
         # Get list cate
         cates = db.session.query(Cate).all()
@@ -65,8 +79,9 @@ class Product(db.Model):
                 'source_url': p.source_url,
                 'image': shopeeImageUrl + p.image,
                 'shop_id': p.shop_id,
-                'source_type_code': p.source_type_code,
-                'cate': productCates[p.cate_id] if p.cate_id in productCates else None
+                'cate': productCates[p.cate_id] if p.cate_id in productCates else None,
+                'updated': p.updated,
+                'source_type': productSourceTypes[p.source_type_code] if p.source_type_code in productSourceTypes else None
             })
 
         return result
