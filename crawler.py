@@ -1,27 +1,16 @@
-from .lib.http_ultility import send_request
+from requests_html import HTMLSession
 
 def crawler():
-	url = "https://shopee.vn/api/v2/search_items/"
-
-	querystring = {"by":"pop","limit":"50","match_id":"78","newest":"0","order":"desc","page_type":"search","version":"2"}
-
-	headers = {
-		'User-Agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36",
-		'Accept': "*/*",
-		'Cache-Control': "no-cache",
-		'Host': "shopee.vn",
-		'Accept-Encoding': "gzip, deflate, br",
-		'Connection': "keep-alive",
-		'cache-control': "no-cache"
-	}
-	result = send_request(url, querystring)
-	json_response = ''
-	if result and 'error' not in result:
-		try:
-			json_response = result.json()
-		except Exception as e:
-			print(e)
-	print(json_response)
+	session = HTMLSession()
+	url = "https://shopee.vn/"
+	# url = "https://www.python.org/"
+	r = session.get(url)
+	r.html.render()
+	# sel = 'div.shopee-recommend-search-word-text'
+	sel = '//*[@id="main"]/div/div[2]/div[2]/div[2]/div[3]/div/div/div[2]/div/div[1]/ul/li[1]/div/a[1]/div/div[2]/div'
+	result = r.html.search('Thiết {} Điện Tử ')[0]
+	print(result)
+	
 
 if __name__ == "__main__":
 	crawler()

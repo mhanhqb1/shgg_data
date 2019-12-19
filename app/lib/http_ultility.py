@@ -20,21 +20,37 @@ user_agents = [
 accept_languages = ['en-US,en;q=0.9', 'de;q=0.8', 'fr',
                     'it;q=0.6,vi-VN;q=0.5', 'fr-FR;q=0.3,pt;q=0.2']
 
-
-def prepare_headers(url):
+def prepare_headers():
     headers = {
         'User-Agent': user_agents[random.randint(0, len(user_agents) - 1)],
         'Accept-Language': accept_languages[random.randint(0, len(accept_languages) - 1)],
-        'referer': url,
         'accept-encoding': 'gzip, deflate, br',
         'Accepts': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
-        'x-requested-with': 'XMLHttpRequest'
+        'x-requested-with': 'XMLHttpRequest',
+        'x-api-source':'pc'
     }
     return headers
 
-def send_request(request_url, params = {}):
-    hdrs = prepare_headers(request_url)
-    result = requests.get(request_url, headers=hdrs, params=params)
+def send_request(request_url, params = {}, proxies = None):
+    hdrs = prepare_headers()
+    # proxies = ['43.247.132.52:3129', '88.118.134.214:38662',"212.56.218.90:48047","59.126.108.147:49480"]
+    if proxies != None:
+        result = requests.get(
+            request_url, 
+            headers=hdrs, 
+            params=params,
+            timeout=3,
+            verify = False
+        )
+    else:
+        result = requests.get(
+            request_url, 
+            headers=hdrs, 
+            params=params,
+            proxies={'http': 'http://' + random.choice(proxies)},
+            timeout=3,
+            verify = False
+        )
     if (result.status_code == 200):
         return result
     if (result.status_code == 403):
