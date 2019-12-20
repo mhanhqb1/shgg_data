@@ -3,6 +3,7 @@ from flask import Blueprint, current_app
 from .common import api_response, api_error
 from ...database.database import db
 from ...models.product import Product
+from ...models.offer import Offer
 
 home_getdata = Blueprint('home_getdata', __name__)
 
@@ -16,6 +17,11 @@ def home_getdata_func():
 
 	# Get list product
 	result['products'] = Product.get_all(param)
+
+	# Get list offer
+	result['offers'] = Offer.get_all({
+		'limit': 6	
+	})
 
 	# Return data
 	return api_response(result)

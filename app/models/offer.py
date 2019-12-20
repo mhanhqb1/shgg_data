@@ -13,3 +13,26 @@ class Offer(db.Model):
     url = db.Column('url', db.String(255))
     source_type_code = db.Column('source_type_code', db.String(45))
     source_id = db.Column('source_id', db.String(255))
+
+    def get_all(param = {}):
+        # Init
+        result = []
+        limit = param['limit'] if 'limit' in param else 20
+        dateFormat = "%Y-%m-%d"
+
+        # Get data
+        offers = db.session.query(Offer).limit(limit).all()
+
+        for o in offers:
+            result.append({
+                'id': o.id,
+                'name': o.name,
+                'image': o.image,
+                'url': o.url,
+                'detail': o.detail,
+                'start_date': o.start_date.strftime(dateFormat),
+                'end_date': o.end_date.strftime(dateFormat)  
+            })
+
+        return result
+
