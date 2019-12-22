@@ -45,6 +45,10 @@ class Product(db.Model):
         productCates = {}
         productSourceTypes = {}
         limit = param['limit'] if 'limit' in param else 20
+        page = param['page'] if 'page' in param else 1
+        offset = int(limit)*(int(page) - 1)
+        cateSlug = param['cate_slug'] if 'cate_slug' in param else ''
+        cateId = None
 
         # Get list source types
         sourceTypes = db.session.query(MasterSourceType).all()
@@ -61,6 +65,8 @@ class Product(db.Model):
         # Get list cate
         cates = db.session.query(Cate).all()
         for c in cates:
+            if (c.slug == cateSlug):
+                cateId = c.id
             productCates[c.id] = {
                 'id': c.id,
                 'name': c.name,
@@ -69,8 +75,16 @@ class Product(db.Model):
                 'icon': c.icon
             }
 
-        # Get list products
-        products = db.session.query(Product).filter(Product.cate_id.isnot(None)).limit(limit).all()
+        # Query
+        query = db.session.query(Product).filter(Product.cate_id.isnot(None))
+
+        # Filter
+        if (cateId != None):
+            query = query.filter(Product.cate_id == cateId)
+
+        # Get product list
+        products = query.limit(limit).offset(offset).all()
+        total = query.count()
         for p in products:
             result.append({
                 'id': p.id,
@@ -84,4 +98,7 @@ class Product(db.Model):
                 'source_type': productSourceTypes[p.source_type_code] if p.source_type_code in productSourceTypes else None
             })
 
-        return result
+        return {
+            'data': result,
+            'total': total
+        }

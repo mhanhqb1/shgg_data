@@ -120,7 +120,7 @@ def get_data(driver):
 		productId = ids[1]
 
 		# Get price
-		priceCssSelector = 'div._36zw98 > div._2XtIUk > span._341bF0'
+		priceCssSelector = 'div._2lBkmX > div._1w9jLI > span._341bF0'
 		parsePrice = item.find_elements_by_css_selector(priceCssSelector)
 		if (parsePrice != []):
 			price = parsePrice[0].text
@@ -129,8 +129,8 @@ def get_data(driver):
 		imageCssSelector = "._1gkBDw > ._3ZDC1p > ._1T9dHf"
 		parseImage = item.find_elements_by_css_selector(imageCssSelector)
 		if (parseImage != []):
-			image = parseImage[0].get_attribute('style')
-			image = re.findall(r'background-image: url\("https://cf.shopee.vn/file/(.*?)"\)', image)
+			image = parseImage[0].get_attribute('src')
+			image = re.findall(r'https://cf.shopee.vn/file/(.*?)', image)
 			if (image != [] and image != None):
 				image = image[0]
 

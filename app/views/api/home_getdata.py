@@ -16,7 +16,8 @@ def home_getdata_func():
 	}
 
 	# Get list product
-	result['products'] = Product.get_all(param)
+	products = Product.get_all(param)
+	result['products'] = products['data']
 
 	# Get list offer
 	result['offers'] = Offer.get_all({

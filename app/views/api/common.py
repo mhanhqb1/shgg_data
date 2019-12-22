@@ -40,3 +40,16 @@ def api_error(message, codeType = '', field = ''):
 		'body': message
 	}
 	return dumps(result)
+
+def get_params(req):
+	params = {}
+	if (req.is_json):
+		for p in req.json:
+			params[p] = req.json[p]
+	if (req.form):
+		for p in req.form:
+			params[p] = req.form[p]
+	if (req.args):
+		for p in req.args:
+			params[p] = req.args[p]
+	return params
