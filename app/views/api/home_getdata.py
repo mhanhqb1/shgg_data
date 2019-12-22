@@ -20,9 +20,10 @@ def home_getdata_func():
 	result['products'] = products['data']
 
 	# Get list offer
-	result['offers'] = Offer.get_all({
+	offers = Offer.get_all({
 		'limit': 6	
 	})
+	result['offers'] = offers['data']
 
 	# Return data
 	return api_response(result)

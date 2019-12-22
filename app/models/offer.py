@@ -17,11 +17,22 @@ class Offer(db.Model):
     def get_all(param = {}):
         # Init
         result = []
+        sourceTypeCode = param['type'] if 'type' in param else ''
         limit = param['limit'] if 'limit' in param else 20
+        page = param['page'] if 'page' in param else 1
+        offset = int(limit)*(int(page) - 1)
         dateFormat = "%Y-%m-%d"
 
+        # Query
+        query = db.session.query(Offer)
+
+        # Filter
+        if (sourceTypeCode != ''):
+            query = query.filter(Offer.source_type_code == sourceTypeCode)
+
         # Get data
-        offers = db.session.query(Offer).limit(limit).all()
+        offers = query.limit(limit).offset(offset).all()
+        total = query.count()
 
         for o in offers:
             result.append({
@@ -34,5 +45,8 @@ class Offer(db.Model):
                 'end_date': o.end_date.strftime(dateFormat)  
             })
 
-        return result
+        return {
+            'data': result,
+            'total': total
+        }
 
