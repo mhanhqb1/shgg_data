@@ -3,6 +3,7 @@ from flask import Blueprint, current_app
 from .common import api_response, api_error
 from ...database.database import db
 from ...models.cate import Cate
+from ...models.master_source_type import MasterSourceType
 
 settings_all = Blueprint('settings_all', __name__)
 
@@ -10,7 +11,8 @@ settings_all = Blueprint('settings_all', __name__)
 def settings_all_func():
     # Init
     result = {
-        'cates': []
+        'cates': [],
+        'source_types': []
     }
 
     # Get list cates
@@ -22,6 +24,17 @@ def settings_all_func():
             'slug': c.slug,
             'image': c.image,
             'icon': c.icon
+        })
+
+    # Get master source types
+    sourceTypes = db.session.query(MasterSourceType).all()
+    for st in sourceTypes:
+        result['source_types'].append({
+            'id': st.id,
+            'code': st.code,
+            'name': st.name,
+            'url': st.url,
+            'logo': st.logo
         })
 
     # Get list social

@@ -44,6 +44,9 @@ class Product(db.Model):
         result = []
         productCates = {}
         productSourceTypes = {}
+
+        # Get param
+        sourceType = param['type'] if 'type' in param else ''
         limit = param['limit'] if 'limit' in param else 20
         page = param['page'] if 'page' in param else 1
         offset = int(limit)*(int(page) - 1)
@@ -81,6 +84,9 @@ class Product(db.Model):
         # Filter
         if (cateId != None):
             query = query.filter(Product.cate_id == cateId)
+
+        if (sourceType != ''):
+            query = query.filter(Product.source_type_code == sourceType)
 
         # Get product list
         products = query.limit(limit).offset(offset).all()
