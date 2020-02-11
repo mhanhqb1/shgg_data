@@ -31,7 +31,7 @@ class Offer(db.Model):
             query = query.filter(Offer.source_type_code == sourceTypeCode)
 
         # Get data
-        offers = query.limit(limit).offset(offset).all()
+        offers = query.order_by(Offer.id.desc()).limit(limit).offset(offset).all()
         total = query.count()
 
         for o in offers:

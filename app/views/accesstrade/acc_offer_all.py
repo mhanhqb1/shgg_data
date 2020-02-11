@@ -17,13 +17,13 @@ def acc_offer_all_func():
 	offers = None
 
 	# Get source types
-	sourceTypes = db.session.query(MasterSourceType.code).all()
-	for st in sourceTypes:
-		merchant = st.code
-		offers = get_offer(merchant)
-		if (offers != None and offers != []):
-			for o in offers:
-				result.append(o)
+	# sourceTypes = db.session.query(MasterSourceType.code).all()
+	# for st in sourceTypes:
+	# 	merchant = st.code
+	offers = get_offer()
+	if (offers != None and offers != []):
+		for o in offers:
+			result.append(o)
 
 	if (result != []):
 		sql = """

@@ -93,7 +93,7 @@ class Product(db.Model):
             query = query.filter(Product.name.like("%{}%".format(search)))
 
         # Get product list
-        products = query.limit(limit).offset(offset).all()
+        products = query.order_by(Product.updated.desc()).limit(limit).offset(offset).all()
         total = query.count()
         for p in products:
             result.append({
