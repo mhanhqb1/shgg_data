@@ -51,6 +51,7 @@ class Product(db.Model):
         page = param['page'] if 'page' in param else 1
         offset = int(limit)*(int(page) - 1)
         cateSlug = param['cate_slug'] if 'cate_slug' in param else ''
+        search = param['s'] if 's' in param else ''
         cateId = None
 
         # Get list source types
@@ -88,6 +89,9 @@ class Product(db.Model):
         if (sourceType != ''):
             query = query.filter(Product.source_type_code == sourceType)
 
+        if (search != ''):
+            query = query.filter(Product.name.like("%{}%".format(search)))
+
         # Get product list
         products = query.limit(limit).offset(offset).all()
         total = query.count()
@@ -108,3 +112,7 @@ class Product(db.Model):
             'data': result,
             'total': total
         }
+
+    def check_link(input):
+        result = ''
+        return result
