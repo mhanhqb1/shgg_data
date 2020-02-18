@@ -126,13 +126,13 @@ def get_data(driver):
 			price = parsePrice[0].text
 
 		# Get image
-		imageCssSelector = "._1gkBDw > ._3ZDC1p > ._1T9dHf"
+		imageCssSelector = "div._1gkBDw > div._3ZDC1p > img._1T9dHf"
 		parseImage = item.find_elements_by_css_selector(imageCssSelector)
 		if (parseImage != []):
 			image = parseImage[0].get_attribute('src')
-			image = re.findall(r'https://cf.shopee.vn/file/(.*?)', image)
+			image = image.split('file/')
 			if (image != [] and image != None):
-				image = image[0]
+				image = image[1]
 
 		result.append({
 			'id': productId,
@@ -157,14 +157,14 @@ def save_data(result, cate):
 	products = []
 	if (result != None):
 		for p in result:
-			print(p['name'], p['price'])
+			print(p['name'], p['price'], p['image'])
 			product = {
 				"name": p['name'],
 				'name_search': p['name'],
 				'price': p['price'],
 				'sale_price': p['price'],
-				'image': p['image'] if 'image' in p else None,
-				'thumb_images': json.dumps(p['images']) if 'images' in p else None,
+				'image': p['image'] if 'image' in p else '',
+				'thumb_images': json.dumps(p['images']) if 'images' in p else '',
 				'cate_id': cate.product_cate_id,
 				'shop_id': p['shop_id'],
 				'source_id': p['id'],
@@ -172,8 +172,8 @@ def save_data(result, cate):
 				'source_url': p['url'],
 				'source_cate_id': cate.cate_id,
 				'source_cate_name': cate.cate_name,
-				'history_price': None,
-				'history_price_ts': None
+				'history_price': '',
+				'history_price_ts': ''
 			}
 			products.append(product)
 		if (products != []):
