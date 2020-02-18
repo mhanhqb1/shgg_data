@@ -14,7 +14,7 @@ import time
 import re
 
 shopee_crawler2 = Blueprint('shopee_crawler2', __name__)
-shopeeMaxPage = 2
+shopeeMaxPage = 100
 shopeeImageUrl = "https://cf.shopee.vn/file/"
 sourceTypeCode = 'shopee'
 todayTime = int(time.mktime(time.strptime(datetime.today().strftime('%Y-%m-%d'), "%Y-%m-%d")))

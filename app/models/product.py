@@ -90,7 +90,15 @@ class Product(db.Model):
             query = query.filter(Product.source_type_code == sourceType)
 
         if (search != ''):
-            query = query.filter(Product.name.like("%{}%".format(search)))
+            checkLink = Product.check_link(search)
+            if (checkLink == None):
+                query = query.filter(Product.name.like("%{}%".format(search)))
+            else:
+                query = query.filter(
+                    Product.source_id == checkLink['product_id'], 
+                    Product.shop_id == checkLink['shop_id'], 
+                    Product.source_type_code == checkLink['source_type_code']
+                )
 
         # Get product list
         products = query.order_by(Product.updated.desc()).limit(limit).offset(offset).all()
@@ -113,6 +121,20 @@ class Product(db.Model):
             'total': total
         }
 
-    def check_link(input):
-        result = ''
+    def check_link(search):
+        result = None
+
+        shopeeUrl = 'https://shopee.vn'
+        if (shopeeUrl in search):
+            urls = search.split('-i.')
+            ids = urls[1]
+            if ('?' in ids):
+                ids = ids.split('?')
+                ids = ids[0]
+            ids = ids.split('.')
+            result = {
+                'product_id': ids[1],
+                'shop_id': ids[0],
+                'source_type_code': 'shopee'
+            }
         return result
