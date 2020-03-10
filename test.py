@@ -11,7 +11,7 @@ def init_driver(url):
 	options.add_argument('headless')
 	options.add_argument('window-size=1200x600')
 	# driver = webdriver.Chrome(chrome_options=options)
-	driver = webdriver.Chrome('/usr/local/bin/chromedriver', chrome_options=options)
+	driver = webdriver.Chrome(executable_path='/usr/local/bin/chromedriver', chrome_options=options)
 	# driver = webdriver.Chrome()
 	driver.get(url)
 	time.sleep(3)
