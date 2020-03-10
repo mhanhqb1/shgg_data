@@ -6,12 +6,11 @@ import time
 import re
 
 def init_driver(url):
-	# driver = webdriver.Chrome(ChromeDriverManager().install())
 	options = webdriver.ChromeOptions()
 	options.add_argument('headless')
 	options.add_argument('window-size=1200x600')
 	# driver = webdriver.Chrome(chrome_options=options)
-	driver = webdriver.Chrome(executable_path='/usr/local/bin/chromedriver', chrome_options=options)
+	driver = webdriver.Chrome(ChromeDriverManager().install(), chrome_options=options)
 	# driver = webdriver.Chrome()
 	driver.get(url)
 	time.sleep(3)
